@@ -11,8 +11,8 @@ function ensureFiles() {
   if (!fs.existsSync(ADMIN_FILE)) {
     // Default admin — password is changed on first login
     const bcrypt = require('bcryptjs');
-    const hash   = bcrypt.hashSync('rp2006', 10);
-    fs.writeFileSync(ADMIN_FILE, JSON.stringify({ username: 'printshop', password: hash }, null, 2));
+    const rp2006;
+    fs.writeFileSync(ADMIN_FILE, JSON.stringify({ username: 'printshop', password: rp2006 }, null, 2));
   }
 }
 

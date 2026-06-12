@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Portal — PrintShop Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖨️</text></svg>">
+  <style>
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+
+    .portal-topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(5, 8, 22, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 0 32px; height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .portal-brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; text-decoration: none; color: var(--text); }
+    .portal-brand .brand-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .portal-brand .brand-text small { display: block; font-size: 0.7rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 2px; }
+    .portal-topbar a { color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .portal-topbar a:hover { color: var(--text); }
+
+    .portal-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px 20px; position: relative; z-index: 2; }
+    .portal-wrap { width: 100%; max-width: 540px; }
+    .portal-header { text-align: center; margin-bottom: 40px; }
+    .portal-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .portal-header p { color: var(--text-muted); font-size: 0.9375rem; }
+
+    .portal-card {
+      background: linear-gradient(145deg, rgba(13, 19, 53, 0.7), rgba(10, 15, 40, 0.6));
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px; padding: 40px;
+      box-shadow: 0 24px 80px -20px rgba(0,0,0,0.5);
+    }
+
+    .key-input-group { position: relative; }
+    .key-input {
+      width: 100%; padding: 16px 18px 16px 50px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.9375rem;
+      letter-spacing: 1.5px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .key-input:focus { border-color: var(--primary); background: rgba(124, 58, 237, 0.05); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1); }
+    .key-input::placeholder { color: var(--text-muted); letter-spacing: normal; font-family: var(--font-sans); }
+    .key-input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+
+    .err-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 12px 16px; border-radius: 10px; font-size: 0.875rem; margin-top: 16px; }
+
+    /* License card */
+    .lic-result {
+      margin-top: 28px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(6, 182, 212, 0.04));
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      border-radius: 16px; padding: 24px;
+      animation: slideDown 0.4s var(--ease-out-expo);
+    }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .lic-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .lic-shop { font-size: 1.25rem; font-weight: 700; }
+    .lic-shop small { display: block; color: var(--text-muted); font-weight: 500; font-size: 0.8125rem; margin-top: 4px; }
+    .lic-badge { padding: 6px 14px; border-radius: 100px; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; }
+    .lic-badge.ok { background: rgba(34, 197, 94, 0.12); color: var(--accent); border: 1px solid rgba(34, 197, 94, 0.3); }
+    .lic-badge.warn { background: rgba(245, 158, 11, 0.12); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .lic-badge.expired { background: rgba(239, 68, 68, 0.12); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .lic-badge.revoked { background: rgba(100, 116, 139, 0.12); color: #94A3B8; border: 1px solid rgba(100, 116, 139, 0.3); }
+
+    .lic-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+    .lic-field { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 12px 14px; }
+    .lic-field .fl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .lic-field .fv { font-size: 0.9375rem; font-weight: 600; color: var(--text); }
+
+    .lic-warn { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #FCD34D; padding: 12px 16px; border-radius: 10px; font-size: 0.875rem; margin-bottom: 16px; }
+
+    .lic-info { background: rgba(255, 255, 255, 0.03); border-radius: 10px; padding: 14px 16px; font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; border-left: 3px solid var(--primary); }
+    .lic-info strong { color: var(--text); }
+
+    .lic-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+
+    /* Footer */
+    .portal-foot { padding: 24px 32px; text-align: center; font-size: 0.8125rem; color: var(--text-muted); position: relative; z-index: 2; }
+    .portal-foot a { color: var(--primary-light); text-decoration: none; }
+    .portal-foot a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .portal-card { padding: 28px 20px; }
+      .lic-grid { grid-template-columns: 1fr; }
+      .portal-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background effects -->
+  <div class="bg-effects" aria-hidden="true">
+    <div class="bg-gradient-orb orb-1"></div>
+    <div class="bg-gradient-orb orb-2"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="portal-topbar">
+    <a href="/" class="portal-brand">
+      <div class="brand-icon">🖨️</div>
+      <div class="brand-text">
+        PrintShop<span style="color:var(--primary)">Pro</span>
+        <small>Customer Portal</small>
+      </div>
+    </a>
+    <a href="/">← Back to Home</a>
+  </div>
+
+  <div class="portal-main">
+    <div class="portal-wrap">
+      <div class="portal-header">
+        <h1>Check Your License</h1>
+        <p>Enter your license key to see your subscription details</p>
+      </div>
+
+      <div class="portal-card">
+        <form id="checkForm" onsubmit="return doCheck(event)">
+          <label style="display:block;font-size:0.8125rem;font-weight:500;color:var(--text-secondary);margin-bottom:8px">License Key</label>
+          <div class="key-input-group">
+            <svg class="key-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+            <input id="keyInput" class="key-input" type="text" placeholder="PSP-XXXX-XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" required>
+          </div>
+          <div id="errBox"></div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:20px" id="checkBtn">
+            Check License →
+          </button>
+        </form>
+
+        <div id="licResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="portal-foot">
+    Need help? <a href="https://wa.me/7387746014">Contact us on WhatsApp</a> · © 2026 PrintShop Pro
+  </div>
+
+  <script>
+    const input = document.getElementById('keyInput');
+    // Auto-format the key as user types
+    input.addEventListener('input', e => {
+      let v = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+      // Strip dashes, then re-insert every 4 chars
+      v = v.replace(/-/g, '').slice(0, 16);
+      const parts = [];
+      for (let i = 0; i < v.length; i += 4) parts.push(v.slice(i, i+4));
+      e.target.value = parts.join('-');
+    });
+
+    async function doCheck(e) {
+      e.preventDefault();
+      const key = input.value.trim();
+      if (!key) return false;
+      const btn = document.getElementById('checkBtn');
+      const errBox = document.getElementById('errBox');
+      const resBox = document.getElementById('licResult');
+      errBox.innerHTML = '';
+      resBox.innerHTML = '';
+      btn.disabled = true;
+      btn.innerHTML = '<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite"></span> Checking...';
+
+      try {
+        const r = await fetch('/api/portal/check-json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        const d = await r.json();
+        btn.disabled = false;
+        btn.innerHTML = 'Check License →';
+        if (!d.valid) {
+          errBox.innerHTML = `<div class="err-box">❌ ${esc(d.reason || 'Invalid license key')}</div>`;
+          return false;
+        }
+        renderLicense(d.license);
+      } catch (e) {
+        btn.disabled = false;
+        btn.innerHTML = 'Check License →';
+        errBox.innerHTML = '<div class="err-box">Network error. Check your connection and try again.</div>';
+      }
+      return false;
+    }
+
+    function renderLicense(l) {
+      const resBox = document.getElementById('licResult');
+      const days = l.daysLeft || 0;
+      let badgeClass = 'ok', badgeText = `✓ ${days} days left`;
+      if (l.status === 'expired') { badgeClass = 'expired'; badgeText = '✕ Expired'; }
+      else if (l.status === 'revoked') { badgeClass = 'revoked'; badgeText = '⊘ Revoked'; }
+      else if (days <= 7) { badgeClass = 'warn'; badgeText = `⚠ ${days} days left`; }
+
+      resBox.innerHTML = `
+        <div class="lic-result">
+          <div class="lic-top">
+            <div class="lic-shop">
+              ${esc(l.shopName)}
+              <small>Customer: ${esc(l.customerName || '—')}${l.customerPhone ? ' · ' + esc(l.customerPhone) : ''}</small>
+            </div>
+            <div class="lic-badge ${badgeClass}">${badgeText}</div>
+          </div>
+
+          ${l.warning ? `<div class="lic-warn">${esc(l.warning)} Contact support to renew your license.</div>` : ''}
+
+          <div class="lic-grid">
+            <div class="lic-field"><div class="fl">Plan</div><div class="fv">${esc(l.planName)}</div></div>
+            <div class="lic-field"><div class="fl">Printer Limit</div><div class="fv">${esc(l.printerLabel)}</div></div>
+            <div class="lic-field"><div class="fl">Valid Until</div><div class="fv">${l.expiresAt}</div></div>
+            <div class="lic-field"><div class="fl">License Key</div><div class="fv" style="font-family:var(--font-mono);font-size:0.8125rem;letter-spacing:1px">${esc(l.key)}</div></div>
+          </div>
+
+          <div class="lic-info">
+            🖥️ Your <strong>PrintShop Pro</strong> software is running on your PC.<br>
+            The dashboard is accessible at <strong>http://localhost:3001</strong> on the computer where the app is installed.
+          </div>
+
+          <div class="lic-actions">
+            <a href="https://wa.me/7387746014?text=Hi%2C%20I%20need%20help%20with%20my%20license%20${encodeURIComponent(l.key)}" class="btn btn-outline btn-sm" style="flex:1;justify-content:center">💬 Get Support</a>
+            ${l.status === 'active' && days <= 30 ? `<a href="https://wa.me/7387746014?text=Hi%2C%20I%20want%20to%20renew%20my%20license%20${encodeURIComponent(l.key)}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center">🔄 Renew License</a>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  </script>
+
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</body>
+</html>

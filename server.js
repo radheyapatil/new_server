@@ -31,6 +31,6 @@ app.listen(PORT, () => {
   console.log(`   Portal:  http://localhost:${PORT}/api/portal`);
   console.log(`   API:     http://localhost:${PORT}/api/validate`);
   console.log(`\n   Default admin login:`);
-  console.log(`   Username: admin`);
-  console.log(`   Password: Admin@PrintShop2026\n`);
+  console.log(`   Username: printshop`);
+  console.log(`   Password: rp2006\n`);
 });

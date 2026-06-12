@@ -37,8 +37,8 @@ Then open:
 - **Customer portal**: http://localhost:3000/api/portal
 
 **Default admin login:**
-- Username: `admin`
-- Password: `Admin@PrintShop2026`
+- Username: `printshop`
+- Password: `rp2006`
 
 > ⚠️ **Change the password immediately** after first login using the 🔐 Password button.
 
@@ -106,4 +106,4 @@ pm2 save && pm2 startup
 - **WhatsApp number**: Edit `91XXXXXXXXXX` in `public/index.html`, `public/admin.html`, and `public/portal.html` (search for `wa.me/91`)
 - **Colors / branding**: Edit CSS variables in `public/style.css` (top of file, `:root { ... }`)
 - **Pricing**: Edit in `licenseEngine.js` (PLANS object) and `public/index.html` (pricing cards)
-- **Default admin**: Edit `db.js` (line 14) — change the bcrypt hash and username
+- **Default admin**: Edit `db.js` (around line 14) — change the bcrypt hash and username

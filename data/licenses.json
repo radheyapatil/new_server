@@ -1,18 +1,1 @@
-[
-  {
-    "id": "084f3e91-3132-438b-90b6-12b506b2d3de",
-    "key": "PSP-DD34-0DC4-3D3D-D57B",
-    "shopName": "Demo Shop",
-    "plan": "pro",
-    "planName": "Pro",
-    "planPrice": 8000,
-    "printerLimit": 7,
-    "printerLabel": "7 Printers",
-    "duration": 90,
-    "durationLabel": "90 Days",
-    "createdAt": "2026-06-12T13:00:08.435Z",
-    "expiresAt": "2026-10-12",
-    "status": "revoked",
-    "updatedAt": "2026-06-12T13:00:08.723Z"
-  }
-]
+[]
